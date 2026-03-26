@@ -1,5 +1,8 @@
+import { ElectronBlocker } from "@ghostery/adblocker-electron";
 import { AfterInit, BaseProvider, BeforeStart, OnDestroy, OnInit } from "@main/utils/baseProvider";
-import { BrowserWindow, Event, IgnoreMouseEventsOptions, IpcMainEvent, IpcMainInvokeEvent, session } from "electron";
+import fetch from "cross-fetch";
+import { app, BrowserWindow, Event, IgnoreMouseEventsOptions, IpcMainEvent, IpcMainInvokeEvent, session } from "electron";
+import { join } from "path";
 import { isDevelopment } from "../utils/devUtils";
 import { IpcContext, IpcHandle, IpcOn } from "../utils/onIpcEvent";
 import { getWindowState, getWindowStateFromContext, pushWindowStates } from "../utils/webContentUtils";
@@ -22,6 +25,22 @@ export default class WindowUtilsProvider extends BaseProvider implements AfterIn
 					},
 				});
 			});
+
+		try {
+			const blocker = await ElectronBlocker.fromPrebuiltAdsAndTracking(fetch);
+			blocker.enableBlockingInSession(session.defaultSession);
+			this.logger.debug("Adblocker enabled successfully.");
+		} catch (error) {
+			this.logger.error("Failed to initialize adblocker:", error);
+		}
+
+		try {
+			const extensionPath = join(app.getAppPath(), "resources/extensions/better-lyrics");
+			await session.defaultSession.loadExtension(extensionPath);
+			this.logger.debug("Better Lyrics extension loaded successfully.");
+		} catch (error) {
+			this.logger.error("Failed to load Better Lyrics extension:", error);
+		}
 	}
 	@IpcHandle("windowState")
 	async _getWindowState(_ev: IpcMainInvokeEvent) {

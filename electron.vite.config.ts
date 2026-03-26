@@ -20,7 +20,7 @@ const resolveOptions: UserConfigExport = {
 		},
 	},
 };
-const externalizedEsmDeps = ["lodash-es", "@faker-js/faker", "@trpc-limiter/memory", "got", "encryption.js"];
+const externalizedEsmDeps = ["lodash-es", "@faker-js/faker", "@trpc-limiter/memory", "got", "encryption.js", "@venipa/xosms"];
 const youtubeClientPlugins = glob.globSync("./src/renderer-plugins/youtube/*.plugin.ts").map((file) => {
 	const name = basename(file, ".ts");
 	return [name, file];
@@ -79,6 +79,7 @@ export default defineConfig({
 		build: {
 			externalizeDeps: { exclude: [...externalizedEsmDeps] },
 			rollupOptions: {
+				external: ["@venipa/xosms"],
 				input: {
 					index: resolve(__dirname, "src/main/main.ts"),
 				},
