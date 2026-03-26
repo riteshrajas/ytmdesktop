@@ -1,6 +1,7 @@
 import { contextBridge, ipcRenderer, webFrame } from "electron";
 import { webUtils } from "electron/renderer";
 import pkg from "../../package.json";
+import { basename } from "../shared/utils/path";
 import translations from "../translations";
 import { createRendererCSSHandler } from "./webFrameUtils";
 
@@ -32,7 +33,7 @@ function ensureDomLoaded(f: () => void) {
 }
 
 // Utility functions
-export const basename = (path: string) => path.split(/[\\/]/).pop();
+export { basename };
 export const setContext = (key: string, value: any) => (process.contextIsolated ? contextBridge.exposeInMainWorld(key, value) : (window[key] = Object.freeze(value)));
 
 // Configure IPC
