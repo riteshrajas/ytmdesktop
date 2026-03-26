@@ -39,7 +39,6 @@
 </template>
 
 <script lang="ts" setup>
-import SettingsCheckbox from "@renderer/components/SettingsCheckbox.vue";
 import Spinner from "@renderer/components/Spinner.vue";
 import { refIpc } from "@shared/utils/Ipc";
 import { computed, onMounted, ref } from "vue";
