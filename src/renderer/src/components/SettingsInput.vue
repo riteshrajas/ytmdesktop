@@ -47,7 +47,6 @@ export default defineComponent({
 		onBeforeMount(async () => {
 			const res = await (window as any).api.settingsProvider.get(context.configKey, context.defaultValue ?? null);
 			value.value = res;
-			console.log({ value: value.value });
 		});
 		const updateSetting = ref<(_ev: HTMLInputElement) => null>(
 			debounce((ev: HTMLInputElement) => {

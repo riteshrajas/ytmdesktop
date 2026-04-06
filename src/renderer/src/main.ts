@@ -68,7 +68,6 @@ const router = createRouter({
 		},
 	],
 });
-console.log({ router });
 createApp(App)
 	.use(router)
 	.use((app) => {
@@ -76,7 +75,6 @@ createApp(App)
 		app.config.globalProperties.console = console;
 		app.config.globalProperties.api = window.api;
 		app.config.globalProperties.translations = window.translations;
-		console.log(app.config.globalProperties);
 		return app;
 	})
 	.mount("#app");

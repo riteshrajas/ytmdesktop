@@ -156,7 +156,6 @@ const [updateDownloaded, setUpdateDownloaded] = refIpc("APP_UPDATE_DOWNLOADED", 
 	mapper: (x) => !!x,
 	async getInitialValue() {
 		return await window.api.action("app.updateDownloaded").then((x) => {
-			console.log("updateDownloaded", x);
 			return !!x;
 		});
 	},

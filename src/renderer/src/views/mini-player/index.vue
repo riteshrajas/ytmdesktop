@@ -287,11 +287,6 @@ onMounted(() => {
     setPlayState(playStateData);
     showWinBorder.value = window.process.platform === "win32" ? (isWin11 ? "win11" : true) : windowState.platform.isMacOS;
     isTop.value = stayTop;
-    console.log({
-      showWinBorder: showWinBorder.value,
-      platform: window.process.platform,
-      isWin11,
-    });
   });
 });
 const { lastFM, lastFMLoading, lastFMState, authorizeLastFM } = refLastFM();
@@ -302,7 +297,6 @@ const getCurrentAccent = (retry: number = 0) => {
   window.ipcRenderer.invoke("api/track/accent").then((clr) => {
     if (!clr || retry > 2) accentColor.value = clr || null;
     else accentColor.value = clr;
-    console.log("Accent", clr);
     if (!clr) accentHandle = setTimeout(getCurrentAccent.bind(this, retry + 1), 500);
   });
 };
@@ -375,11 +369,6 @@ function setCurrentTime(ev: MouseEvent) {
   const percSelected = ev.x / el.clientWidth;
   const { duration } = playState.value;
   const seekTime = clamp(duration * percSelected, 0, duration) * 1000;
-  console.log({
-    percentage: percSelected,
-    value: seekTime / 1000,
-    duration,
-  });
   trackBusy.value = true;
   return window.ipcRenderer.invoke("api/track/seek", { time: seekTime, type: "seek" }).finally(() => {
     trackBusy.value = false;

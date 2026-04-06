@@ -43,7 +43,6 @@ function reloadCSS() {
 }
 function openCSSFile() {
 	const path = customCssPathInput.value?.value;
-	console.log({ path });
 	if (path) {
 		window.api.openFile(path);
 	}
