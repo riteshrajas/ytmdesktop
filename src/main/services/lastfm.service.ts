@@ -4,7 +4,7 @@ import { IpcContext, IpcHandle } from "@main/utils/onIpcEvent";
 import { escapeHTML } from "@shared/utils/string";
 import { App, BrowserWindow, shell } from "electron";
 import { LastFMSettings } from "ytmd";
-import { parseJson, stringifyJson } from "../lib/json";
+import { parseJson } from "../lib/json";
 import { LASTFM_KEYTAR_SESSION, LASTFM_KEYTAR_TOKEN } from "../lib/keytar";
 import { LastFMClient } from "../lib/lastfm";
 import IPC_EVENT_NAMES from "../utils/eventNames";
@@ -91,13 +91,11 @@ export default class LastFMProvider extends BaseProvider implements AfterInit, O
 		const hasSuccessInfo = () => win.webContents.executeJavaScript(`!!document.querySelector("#mantle_skin .alert.alert-success")`);
 		const settings = this.getProvider("settings");
 		win.webContents.on("did-navigate", async (ev, url, code, status) => {
-			this.logger.debug(`[URL]> ${url}, ${code}, ${status}`);
 			if (await hasSuccessInfo()) {
 				const { userState }: LastFMUserState = await win.webContents
 					.executeJavaScript(`document.getElementById("tlmdata")?.dataset?.tealiumData`)
 					.then(parseJson<LastFMUserState>)
 					.catch(() => ({}) as any);
-				this.logger.debug(`[Auth]> User: ${stringifyJson(userState)}`);
 				if (userState === "authenticated") {
 					await secureStore.set(LASTFM_KEYTAR_TOKEN, token);
 					const sessionToken = await this.client.getSession();
@@ -106,7 +104,6 @@ export default class LastFMProvider extends BaseProvider implements AfterInit, O
 						if (!win.isDestroyed()) win.close();
 					}
 
-					this.logger.debug(`[Auth]> Authenticated: ${sessionToken}`);
 					settings.set("lastfm.enabled", true);
 					settings.set("lastfm.name", escapeHTML(this.client.getName() || null));
 					settings.saveToDrive();
@@ -186,8 +183,6 @@ export default class LastFMProvider extends BaseProvider implements AfterInit, O
 				duration: track.meta.duration,
 				...(track.music?.album && { album: track.music.album }),
 			})
-			.then(stringifyJson)
-			.then((d) => this.logger.debug(d))
 			.then(() => {
 				this.windowContext.sendToAllViews(IPC_EVENT_NAMES.LAST_FM_SUBMIT_STATE, true);
 			})
@@ -212,8 +207,6 @@ export default class LastFMProvider extends BaseProvider implements AfterInit, O
 				duration: track.meta.duration,
 				...(track.music?.album && { album: track.music.album }),
 			})
-			.then(stringifyJson)
-			.then((d) => this.logger.debug(d))
 			.then(() => {
 				this.windowContext.sendToAllViews(IPC_EVENT_NAMES.LAST_FM_SUBMIT_STATE, true);
 			})
